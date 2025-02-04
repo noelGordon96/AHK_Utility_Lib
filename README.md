@@ -9,7 +9,9 @@ This is a work in progress... I am slowly adding to this as I consolodate functi
 # Function Usage
 The function names in this library are written acording to the syntax **MyPrefix_MyFunc()** noted in the official AHK documentation: https://www.autohotkey.com/docs/v2/Scripts.htm#lib
 
-The files are named as **MyPrifix.ahk** so as long as the files are in an accessible library by your script, you can call them in your scripts **MyPrefix_MyFunc(Params)**.
+~~The files are named as **MyPrifix.ahk** so as long as the files are in an accessible library by your script, you can call them in your scripts **MyPrefix_MyFunc(Params)**.~~
+
+***NOTICE:** The migration to AHKv2 may have changed the above text. With the enhanced error checking in V2 this can cause issues because the functions show as not having a declaration (since the declaration is in a separate file). Manually including the library file with **#Include** solves this for not but I am still looking into alternatives like **#Warn**.*
 
 
 # Function Libraries
