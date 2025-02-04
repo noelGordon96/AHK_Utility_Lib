@@ -55,3 +55,14 @@ Easily move and maximize windows to specific monitors.
 ***WindowManagement_MoveToMon(monitorNum)***: Move the active window to the specified monitor. Also resizes the window to fit on the monitor with some buffer area.
 
 ***WindowManagement_MaxOnMon(monitorNum)***: Maximize the active window on the specified monitor if not already.
+
+
+
+## UtilityWindows
+This library includes some aditional generic windows that can be displayed to the user for various purposes. Althoug not their main purpose, these window GUIs can also serve as good templates to copy and further customize within your code.
+
+### Available Public Functions
+
+***UtilityWindows_parallelMessageBox(winTitle, winMessage, btnText := "OK")***: This function displays a simple message window to the user (similar to MsgBox). However because it it a custom gui, it does not interupt the rest of the script. So it can be used to display info to the user while still executing other lines of code.
+
+***UtilityWindows_dontShowAgainMessage(winTitle, winMessage, hideWinKey, btnText := "OK")***: This function again shows a simple message to the user, however it included a "Don't show again" checkbox. The "hideWinKey" is what is used to remember each unique window type within the settings ini file.
