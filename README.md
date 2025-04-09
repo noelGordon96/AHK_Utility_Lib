@@ -16,11 +16,11 @@ The function names in this library are written acording to the syntax **MyPrefix
 
 # Function Libraries
 
-## ShortcutManagement (Not Converted)
+## ShortcutManagement
 Run and manages saved shortcuts and folder locations allowing you to easily connect to other system resources, programs, and files. The real benefit of this is that when attempting to run a deleted or moved shortcut, the library will help you repair the target location. This can be useful in an organizational environment were rescource you connect to may be changed, migrated, or restructured.
 
 ### Available Public Functions
-***ShortcutManagement_getStoredFolderPath(locationName)***: Retrieve a saved location directory path. If the path does not exist or was not previouly saved, function assists the user walking them through selecting the folder and storing it for next time.
+***ShortcutManagement_getStoredFolderPath(locationName)***: Retrieve a saved location directory path. This allows user to include path locations in the parent (including) script. If the path does not exist or was not previouly saved, function assists the user walking them through selecting the folder and storing it for next time.
 
 ***ShortcutManagement_runShortcut(shortcutName)***: Run a saved shortcut (.lnk) file. If the shortcut does not exist or is broken, the user is walked through the process of selecting the correct file and the shortcut is auotmatically fixed.
 
