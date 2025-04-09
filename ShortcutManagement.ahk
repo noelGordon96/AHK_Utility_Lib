@@ -97,7 +97,7 @@ ShortcutManagement_runShortcut(shortcutName){
 	; TEMP SOLUTION: should probably create a "openURL" function instead...
 	; ...this would allow opening in new window vs tab (but would require browser specific code)
 	; ...also this method does not allow automatic repair/creation of URL shortcuts
-	shortcutPath := ""
+	shortcutPath := "none_determined"
 	if FileExist(shortcutPath_noExt ".lnk"){
 		shortcutPath := shortcutPath_noExt ".lnk"
 	}
