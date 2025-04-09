@@ -77,7 +77,6 @@ ShortcutManagement_getStoredFolderPath(locationName){
 	else{
 		Exit
 	}
-
 }
 
 
@@ -90,9 +89,22 @@ ShortcutManagement_runShortcut(shortcutName){
 	; connect to storage for folder paths
 	global shortcutDir
 	
-	;parse shortcut full path
-	shortcutName := "_Shortcut_" . shortcutName
-	shortcutPath := shortcutDir . "\" . shortcutName . ".lnk"
+	;parse shortcut full path (minus the extension)
+	shortcutName := "_Shortcut_" shortcutName
+	shortcutPath_noExt := shortcutDir "\" shortcutName
+
+	; check if shortcut file is an lnk instead or a url
+	; TEMP SOLUTION: should probably create a "openURL" function instead...
+	; ...this would allow opening in new window vs tab (but would require browser specific code)
+	; ...also this method does not allow automatic repair/creation of URL shortcuts
+	shortcutPath := ""
+	if FileExist(shortcutPath_noExt ".lnk"){
+		shortcutPath := shortcutPath_noExt ".lnk"
+	}
+	else if FileExist(shortcutPath_noExt ".url"){
+		shortcutPath := shortcutPath_noExt ".url"
+	}
+	
 	
 	; attemp to run the shortcut
 	try {
@@ -155,9 +167,7 @@ ShortcutManagement_runShortcut(shortcutName){
 		; Exit the subroutine or hotkey to avoid further issues
 		; User will need to press hotkey again to continue workflow
 		Exit()
-		
 	}
-
 }
 
 

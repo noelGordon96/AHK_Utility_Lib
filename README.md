@@ -22,7 +22,8 @@ Run and manages saved shortcuts and folder locations allowing you to easily conn
 ### Available Public Functions
 ***ShortcutManagement_getStoredFolderPath(locationName)***: Retrieve a saved location directory path. This allows user to include path locations in the parent (including) script. If the path does not exist or was not previouly saved, function assists the user walking them through selecting the folder and storing it for next time.
 
-***ShortcutManagement_runShortcut(shortcutName)***: Run a saved shortcut (.lnk) file. If the shortcut does not exist or is broken, the user is walked through the process of selecting the correct file and the shortcut is auotmatically fixed.
+***ShortcutManagement_runShortcut(shortcutName)***: Run a saved shortcut (.lnk or .url) file. If the shortcut does not exist or is broken, the user is walked through the process of selecting the correct file and the shortcut is auotmatically fixed.<br>
+*NOTE: Automatic repair currently only works with .lnk files. URL shortcut files need to be manually added into the "shortcutDir" folder (with the correct naming convention of "\_Shortcut\_\<shortcutName\>").*
 
 
 ## ManageDesktops (Not Converted)
