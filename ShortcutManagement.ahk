@@ -5,7 +5,7 @@
 
 ; SCRIPT NAME:	Shortcut Management (Function Library)
 ; DESCRIPTION:	Provides functions easily running and managing a script's shortcuts
-; VERSION:		2.4.9.25
+; VERSION:		2.7.2.25
 ; AUTHOR:		Noel Gordon (veggieman1996@gmail.com)
 ; SCOURCE:		none
 
@@ -31,6 +31,9 @@
 
 
 
+; Retrieve a stored system location path from the shortcut folder
+; If the location does not exist, this function will help the user
+; in repairing the location by allowing them to select a new folder
 ShortcutManagement_getStoredFolderPath(locationName){
 
 	; connect to storage for folder paths
@@ -169,6 +172,50 @@ ShortcutManagement_runShortcut(shortcutName){
 
 
 
+
+; Attempt to run a shortcut from the shortcut folder, but first check with the user
+; User can choose to proceed with running the shortcut or cancel or postpone the action
+ShortcutManagement_checkRunShortcut(shortcutName, winTitle := "Run Shortcut Confirmation", userMessage := "Do you want to run `"" shortcutName "`" right now?`r`n"){
+
+	; connect to storage for folder paths
+	global shortcutDir
+
+	; ask user how they would like to proceed
+	userChoice := showRunConfirmationWindow(winTitle, userMessage)
+	
+	; if user confirmed the action, run the shortcut
+	if (userChoice == "CONFIRM"){
+		ShortcutManagement_runShortcut(shortcutName)
+	}
+
+	; if user cancelled the action, exit sub-routine
+	else if (userChoice == "CANCEL"){
+		return
+	}
+
+	; if user postponed the action, determine delay ammount and set timer
+	else if (userChoice == "DELAY"){
+		; ask user how long they would like to delay the action
+		inputBox_delay := InputBox("Number of minutes to delay:", "Delay Shortcut Action",, 30)
+		
+		; if user did not enter a value, exit sub-routine
+		if (inputBox_delay.value == ""){
+			return
+		}
+		
+		; bind funtion with parameters (it itself) for later timer call back
+		delayedFunction := ShortcutManagement_checkRunShortcut.Bind(shortcutName, userMessage)
+
+		; set timer to repeat this routine after the specified delay
+		timer_mils := Number(inputBox_delay.value) * 60000
+		SetTimer(delayedFunction, -timer_mils)
+	}
+
+}
+
+
+
+
 ;###########################################################
 ;	PRIVATE UTILITY FUNCTIONS
 ;###########################################################
@@ -226,4 +273,55 @@ showMessageWindow(winTitle, winMessage, btnText := "OK"){
 		oldTargetWin.Destroy()
 	}
 }
+
+
+
+
+; ask user if they want to run a shortcut, cancel, or postpone
+showRunConfirmationWindow(winTitle, winMessage, btnText_1 := "Confirm", btnText_2 := "Delay", btnText_3 := "Cancel"){
+
+	userChoice := "NO_CHOICE"
+
+	; create custom gui win
+	runConfirmWin := Gui(, winTitle)
+	runConfirmWin.Opt("+AlwaysOnTop -MinimizeBox")
+	runConfirmWin.MarginX := 10
+	runConfirmWin.MarginY := 10
+	runConfirmWin.BackColor := "ffffff"
+	runConfirmWin.SetFont("s9", "Segoe UI")
+	runConfirmWin.Add("Text", "w400 +Wrap", winMessage)
+	
+	confirmBtn := runConfirmWin.Add("Button", "Default w80 h25 x20 section", btnText_1)
+	delayBtn := runConfirmWin.Add("Button", "w80 h25 xs95 ys0", btnText_2)
+	cancelBtn := runConfirmWin.Add("Button", "w80 h25 x310 ys0", btnText_3)
+
+	confirmBtn.OnEvent("Click", confirmOperation_handle)
+	delayBtn.OnEvent("Click", dalayOperation_handle)
+	cancelBtn.OnEvent("Click", cancelOperation_handle)
+
+	runConfirmWin.OnEvent("Close", cancelOperation_handle)
+	runConfirmWin.Show("xCenter y150 w420")
+
+	; wait for window to be closed and return user choice
+	WinWaitClose("Run Shortcut Confirmation")
+	return userChoice
+	
+
+	; gui internal button handler funtions
+	confirmOperation_handle(*){
+		userChoice := "CONFIRM"
+		runConfirmWin.Destroy()
+	}
+	dalayOperation_handle(*){
+		userChoice := "DELAY"
+		runConfirmWin.Destroy()
+	}
+	cancelOperation_handle(*){
+		userChoice := "CANCEL"
+		runConfirmWin.Destroy()
+	}
+}
+
+
+
 
