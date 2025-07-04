@@ -303,7 +303,7 @@ showRunConfirmationWindow(winTitle, winMessage, btnText_1 := "Confirm", btnText_
 	runConfirmWin.Show("xCenter y150 w420")
 
 	; wait for window to be closed and return user choice
-	WinWaitClose("Run Shortcut Confirmation")
+	WinWaitClose(winTitle)
 	return userChoice
 	
 
