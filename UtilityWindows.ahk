@@ -26,6 +26,37 @@
 
 
 ;###########################################################
+;	TRANSPARENT MESSAGE WINDOW
+;###########################################################
+
+
+
+; similar to a plain MsgBox except that it does not pause the script
+UtilityWindows_tranparentMessageWindow(winMessage, x := "Center", y := "Center", messageColor := "fc0303") {
+    
+    ; create gui and add contents and controls
+    global msgWin := Gui(, "Transparent Window")
+	msgWin.Opt("+AlwaysOnTop +LastFound +ToolWindow -Caption")
+    msgWin.MarginX := 10
+    msgWin.MarginY := 10
+	msgWin.BackColor := "ffffff"
+    msgWin.SetFont("s24 bold c" . messageColor, "New Courior")
+    msgWin.Add("Text",, winMessage)
+    WinSetTransparent(100, msgWin.hwnd)
+    
+	msgWin.OnEvent("Close", UtilityWindows_closeTransparentWindow)
+    msgWin.Show("x" . x . " y" . y)
+
+}
+
+; gui internal methods
+UtilityWindows_closeTransparentWindow(*){
+    msgWin.Destroy()
+}
+
+
+
+;###########################################################
 ;	PARALLEL MESSAGE WINDOW
 ;###########################################################
 

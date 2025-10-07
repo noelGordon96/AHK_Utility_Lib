@@ -67,6 +67,34 @@ This library includes some additional generic windows that can be displayed to t
 
 ### Available Public Functions
 
+***UtilityWindows_tranparentMessageWindow(winMessage, x := "Center", y := "Center", messageColor := "fc0303")***: This function displays a transparent window that displays a message on screen. THIS FUNCTION IS NOT FINSIHED YET.
+
+***UtilityWindows_closeTransparentWindow()***: Close the previous transparent window mentioned above. Since otherwise the window have some way of closing without exiting the script.
+
+
 ***UtilityWindows_parallelMessageBox(winTitle, winMessage, btnText := "OK")***: This function displays a simple message window to the user (similar to MsgBox). However because it it a custom gui, it does not interupt the rest of the script. So it can be used to display info to the user while still executing other lines of code.
 
 ***UtilityWindows_dontShowAgainMessage(winTitle, winMessage, hideWinKey, btnText := "OK")***: This function again shows a simple message to the user, however it included a "Don't show again" checkbox. The "hideWinKey" is what is used to remember each unique window type within the settings ini file.
+
+
+
+
+## ScreenAutomation (BETA)
+*This library is a work in progress and it likey to change make sure you pay attention to the function parameters as these may also change between versions.* The purpose of this library is to assist with writing fairly complex script that for things like form automation where regular mouse movement and keyboard input are involved. --- The basic principal is you can use defined "locations" on your screen when writing the script and when you script runs it will prompt the user to store and remember these locations so on subsequent runs the script will know where on your screen which locations. I'll include more details an examples in later versions
+
+### Available Public Functions
+More detials on each of these will be included later.
+
+***ScreenAutomation_copyBrowserAddressBar(windowTitle := "A")***: *Works with Google Chrome
+
+***ScreenAutomation_waitForUser(message := "Confirm Action", continueKey := "Enter", messageColor := "fc0303")***
+
+***ScreenAutomation_mouseMoveToLocation(locationName, anchorLocation := "")***
+
+***ScreenAutomation_saveCurrentMouseLocation(locationName)***
+
+***ScreenAutomation_clickLocation(locationName, pauseAfterClick := 0, requireConfirmation := false, verifyWinTitle := "", anchorLocation := "", autoRecord := false)***
+
+***ScreenAutomation_deleteCoordinates(locationName := "")***
+
+***ScreenAutomation_deleteCoordinates(locationName := "")***
