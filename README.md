@@ -27,7 +27,7 @@ Run and manages saved shortcuts and folder locations allowing you to easily conn
 
 ***ShortcutManagement_checkRunShortcut(shortcutName, winTitle, userMessage)***: Run a saved shortcut as with previous funtion, but first prompt the user to either confirm, postpone, or cancel the action. (Example Usecase: Include this function in a small script run by Windows Task Scheduler to launch your email program everyday at a specific time, the key being now the scheduled task can be easily postponed at will)
 
-## ManageDesktops (Not Converted to V2)
+## ManageDesktops
 Create, manage, and easily move between Windows 11 virtual desktops. Includes some methods to "pull" windows with you when moving to or creating another desktop (this does not function for all windows).
 
 ### Available Public Functions
@@ -98,3 +98,5 @@ More detials on each of these will be included later.
 ***ScreenAutomation_deleteCoordinates(locationName := "")***
 
 ***ScreenAutomation_deleteCoordinates(locationName := "")***
+
+***ScreenAutomation_sendText(textToSend, pauseAfterSend := 0)***

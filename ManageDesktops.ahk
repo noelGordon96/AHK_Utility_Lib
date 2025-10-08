@@ -6,7 +6,7 @@
 ; SCRIPT NAME:	Debug (Function Library)
 ; DESCRIPTION:	Provides functions for navigating and managing
 ;				Windows virtual desktops.
-; VERSION:		2.5.6.25
+; VERSION:		2.10.7.25
 ; AUTHOR:		Noel Gordon (veggieman1996@gmail.com) using external scource
 ; SCOURCE:		https://www.computerhope.com/tips/tip224.htm
 
@@ -28,6 +28,14 @@
 ; SHIFT can also be used for this purpose
 
 
+; ##########################################################
+; 	COMPATABILITY AND DEPENDENCIES
+; ##########################################################
+
+
+#Requires AutoHotkey v2
+
+
 ;###########################################################
 ;	WINDOW MOVEMENT FUNCTIONS
 ;###########################################################
@@ -36,9 +44,9 @@
 
 
 
-/*
 ; Move the active window to another virtual desktop
 ; Destination Virtional Desktop will be created if needed
+; Does not work on some windows (notable example: Microsoft Outlook)
 ManageDesktops_moveWindowToVirtualDesktop(destinationDesktop)
 {
 	; Pull values from registry to determine current system state
@@ -51,12 +59,12 @@ ManageDesktops_moveWindowToVirtualDesktop(destinationDesktop)
 	; make sure the destination desktop is not the current desktop
 	if (destinationDesktop != currentDesktop){
 		
-		
 		; Toggle the window to be visible on all virtual desktops
-		SetTitleMatchMode, 1
-		WinGetTitle, winTitle, A
-		WinSet, ExStyle, ^0x80, %winTitle%
-		
+		currentMatchMode := A_TitleMatchMode
+		SetTitleMatchMode(1)
+		winTitle := WinGetTitle("A")
+		WinSetExStyle("^0x80", winTitle)
+		WinRedraw(winTitle)
 		
 		; Create virtual desktops if needed
 		while (destinationDesktop > desktopCount){
@@ -67,23 +75,23 @@ ManageDesktops_moveWindowToVirtualDesktop(destinationDesktop)
 		; Move to destination virtual desktop and sleep to allow system to catch up
 		ManageDesktops_switchDesktopByNumber(destinationDesktop)
 		; sleep only needed if new desktops were not created (may optimize later)
-		sleep % 400 * (abs(destinationDesktop - currentDesktop))
+		sleep(400 * (abs(destinationDesktop - currentDesktop)))
 		
 		; Toggle the window back to only visible on one virtual desktop
-		WinSet, ExStyle, ^0x80, %winTitle%
-		WinActivate, %winTitle%
-		
+		WinSetExStyle("^0x80", winTitle)
+		WinRedraw(winTitle)
+		WinActivate(winTitle)
+		SetTitleMatchMode(currentMatchMode) ;restore previous mode
 	}
 }
-*/
 
 
 
 
-/*
 ; Move multiple windows to another virtual desktop
 ; Windows are passed in as an array of window titles
 ; Destination Virtional Desktop will be created if needed
+; Does not work on some windows (notable example: Microsoft Outlook)
 ManageDesktops_moveWindowsToVirtualDesktop(destinationDesktop, windowTitleArray)
 {
 
@@ -97,19 +105,18 @@ ManageDesktops_moveWindowsToVirtualDesktop(destinationDesktop, windowTitleArray)
 	; make sure the destination desktop is not the current desktop
 	if (destinationDesktop != currentDesktop){
 		
-		
-		
 		; Loop through list of windows and toggle to be visible on all virtual desktops
-		SetTitleMatchMode, 1
+		currentMatchMode := A_TitleMatchMode
+		SetTitleMatchMode(1)
 		For index in windowTitleArray {
 			currentValue := windowTitleArray[index]
-			WinActivate, %currentValue%
-			WinWaitActive, %currentValue%,, 5
+			WinActivate(currentValue)
+			WinWaitActive(currentValue,, 5)
 			if WinActive(currentValue){
-				WinSet, ExStyle, ^0x80, %currentValue%
+				WinSetExStyle("^0x80", currentValue)
+				WinRedraw(currentValue)
 			}
 		}
-		
 		
 		; Create virtual desktops if needed
 		while (destinationDesktop > desktopCount){
@@ -120,25 +127,22 @@ ManageDesktops_moveWindowsToVirtualDesktop(destinationDesktop, windowTitleArray)
 		; Move to destination virtual desktop and sleep to allow system to catch up
 		ManageDesktops_switchDesktopByNumber(destinationDesktop)
 		; sleep only needed if new desktops were not created (may optimize later)
-		sleep % 400 * (abs(destinationDesktop - currentDesktop))
+		sleep(400 * (abs(destinationDesktop - currentDesktop)))
 		
 		
 		; Loop back through list of windows and toggle back to only visible on one virtual desktop
 		For index in windowTitleArray {
 			currentValue := windowTitleArray[index]
-			WinActivate, %currentValue%
-			WinWaitActive, %currentValue%,, 5
+			WinActivate(currentValue)
+			WinWaitActive(currentValue,, 5)
 			if WinActive(currentValue){
-				WinSet, ExStyle, ^0x80, %currentValue%
+				WinSetExStyle("^0x80", currentValue)
+				WinRedraw(currentValue)
 			}
 		}
-		
+		SetTitleMatchMode(currentMatchMode) ;restore previous mode
 	}
-
 }
-*/
-
-
 
 
 
@@ -152,7 +156,6 @@ ManageDesktops_moveWindowsToVirtualDesktop(destinationDesktop, windowTitleArray)
 
 ; This function switches to the desktop number provided.
 ; Destiniation Desktop needs to first exist
-;
 ManageDesktops_switchDesktopByNumber(targetDesktop)
 {
 	; Pull values from registry to determine current system state
@@ -191,7 +194,6 @@ ManageDesktops_switchDesktopByNumber(targetDesktop)
 
 
 ; This function creates a new virtual desktop and switches to it
-;
 ManageDesktops_createVirtualDesktop()
 {
 	KeyWait("ALT")	;see note above
@@ -202,20 +204,17 @@ ManageDesktops_createVirtualDesktop()
 
 
 
-/*
 ; This function deletes the current virtual desktop
-;
 ManageDesktops_deleteVirtualDesktop()
 {
 	; send keystrokes to delete current virtual desktop
 	; NOTE: KeyWait ensures that the built in Windows Office365
 	; hotkey is not triggered: WIN+CRTL+ALT+SHIFT
 	; either ALT or SHIFT can be used for this purpose
-	KeyWait, ALT
-	;KeyWait, SHIFT
-	Send, #^{F4}
+	KeyWait("ALT")
+	;KeyWait("SHIFT")
+	Send("#^{F4}")
 }
-
 
 
 
@@ -226,7 +225,7 @@ ManageDesktops_deleteVirtualDesktop()
 
 
 
-
+; Get the name of the specified virtual desktop
 ManageDesktops_getVirtualDesktopName(desktopId := "current"){
 
 	; Get current desktop id if not provided
@@ -235,7 +234,7 @@ ManageDesktops_getVirtualDesktopName(desktopId := "current"){
 	}
 	
 	; Convert desktop id to uppercase
-	StringUpper, destopId, desktopId
+	destopId := StrUpper(desktopId)
 	
 	; parse id into usable form to access window name
 	; NOTE: Windows registry key to get desktop name is the same data
@@ -260,10 +259,10 @@ ManageDesktops_getVirtualDesktopName(desktopId := "current"){
 	regValName_currentVirtualDesktopName := "Name"
 	
 	; Get current desktop ID from registry and set IdLength
-	RegRead, CurrentVirtualDesktopName, %regKeyName_currentVirtualDesktopName%, %regValName_currentVirtualDesktopName%
+	CurrentVirtualDesktopName := RegRead(regKeyName_currentVirtualDesktopName, regValName_currentVirtualDesktopName, "NOT_FOUND")
 	
 	; Return desktop name from the registry
-	if (CurrentVirtualDesktopName) {
+	if (CurrentVirtualDesktopName != "NOT_FOUND") {
 		return CurrentVirtualDesktopName
 	}
 	; Return generic name given by the system if needed (not stored in the registry)
@@ -288,6 +287,7 @@ ManageDesktops_getVirtualDesktopCount(){
 }
 
 
+
 ; Return the number (1 indexed) of the currently active desktop
 ManageDesktops_getCurrentDesktopNumber(){
 	
@@ -302,7 +302,6 @@ ManageDesktops_getCurrentDesktopNumber(){
 
 
 
-
 ;###########################################################
 ;	UTILITY FUNCTIONS (PRIVATE, USED WITHIN OTHER FUNCTIONS)
 ;###########################################################
@@ -311,48 +310,45 @@ ManageDesktops_getCurrentDesktopNumber(){
 
 
 
-
 ; Get the registry id of current virtual desktop
 getCurrentDesktopId(){
-	
 	; Windows registry location for the currently active virtual desktop id
 	regKeyName_currentVirtualDesktopId := "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\VirtualDesktops"
 	regValName_currentVirtualDesktopId := "CurrentVirtualDesktop"
 	
 	; Get current desktop ID from registry
-	RegRead, CurrentVirtualDesktopId, %regKeyName_currentVirtualDesktopId%, %regValName_currentVirtualDesktopId%
+	CurrentVirtualDesktopId := RegRead(regKeyName_currentVirtualDesktopId, regValName_currentVirtualDesktopId, "NOT_FOUND")
 	
 	; Return desktop id if valid or display error
-	if (CurrentVirtualDesktopId) {
+	if (CurrentVirtualDesktopId != "NOT_FOUND") {
 		return CurrentVirtualDesktopId
 	}
 	else {
-		MsgBox, ERROR Autohotkey ManageDesktops library: Could not find current virtutal desktop id in registry
+		MsgBox("ERROR Autohotkey ManageDesktops library: Could not find current virtutal desktop id in registry")
 	}
 }
 
 
 getVirtualDesktopIdList(){
-
 	; Windows registry location for the currently active virtual desktop id
 	regKeyName_virtualDesktopIdList := "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VirtualDesktops"
 	regValName_virtualDesktopIdList := "VirtualDesktopIDs"
 
 	; Get a list of the UUIDs for all virtual desktops on the system
-	RegRead, VirtualDesktopList, %regKeyName_virtualDesktopIdList%, %regValName_virtualDesktopIdList%
+	VirtualDesktopList := RegRead(regKeyName_virtualDesktopIdList, regValName_virtualDesktopIdList, "NOT_FOUND")
 	
 	; Return desktop id list if valid or display error
-	if (VirtualDesktopList) {
+	if (VirtualDesktopList != "NOT_FOUND") {
 		return VirtualDesktopList
 	}
 	else {
-		MsgBox, ERROR Autohotkey ManageDesktops library: Could not find virtutal desktop id list in registry
+		MsgBox("ERROR Autohotkey ManageDesktops library: Could not find virtutal desktop id list in registry")
 	}
 }
 
 
 
-
+; Calculate and return the number (1 indexed) of the current virtual desktop
 getCurrentDesktopNumber(currentId, desktopIdList){
 
 	; Get desktop count
@@ -373,9 +369,8 @@ getCurrentDesktopNumber(currentId, desktopIdList){
 	}
 	
 	; Display error message if dektop was not found
-	MsgBox, ERROR Autohotkey ManageDesktops library: Could not find current virtutal desktop in desktop registry list
+	MsgBox("ERROR Autohotkey ManageDesktops library: Could not find current virtutal desktop in desktop registry list")
 }
-
 
 
 
@@ -388,5 +383,5 @@ getVirtualDesktopCount(currentId, desktopIdList){
 	desktopCount := idList_len / curId_len
 	return desktopCount
 }
-*/
+
 
