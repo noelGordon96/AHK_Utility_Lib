@@ -6,7 +6,7 @@
 ; SCRIPT NAME:	ScreenAutomation (Function Library)
 ; DESCRIPTION:	Provides functions for easily auotmating mouse clicks
 ;				and movements to defined locations on the screen.
-; VERSION:		2.8.4.25
+; VERSION:		2.5.20.26
 ; AUTHOR:		Noel Gordon (veggieman1996@gmail.com)
 ; SCOURCE:		none
 
@@ -53,6 +53,9 @@ repairCoord_screen_y := 0
 ; set DPI awareness context to "per monitor v2" for better scaling on high DPI displays
 ; this fixes issues with mouse coordinates being off on multiple displays with different DPI settings/scaling
 DllCall("SetThreadDpiAwarenessContext", "ptr", -3, "ptr")
+
+; globally set the coordinate mode for mouse functions to screen
+CoordMode("Mouse", "Screen")
 
 
 ;###########################################################
@@ -101,11 +104,16 @@ ScreenAutomation_copyBrowserAddressBar(windowTitle := "A"){
 
 ; Wait for user to press a predefined key to continue the script
 ; Key is defines in the settings for this library
-ScreenAutomation_waitForUser(message := "Confirm Action", continueKey := "Enter", messageColor := "fc0303"){
-	UtilityWindows_tranparentMessageWindow(message, "1500", "-150", messageColor)
+ScreenAutomation_waitForUser(message := "Confirm Action", continueKey := "Enter", messageColor := "fc0303", pauseAfterConfirm := 0){
+	activeWindow := WinGetTitle("A")
+	msgWin := UtilityWindows_tranparentMessageWindow(message, "1500", "-150", messageColor)
+	WinActivate(activeWindow) ; reactivate the previously active window (in case the message window stole focus)
 	KeyWait(continueKey, "D")
 	KeyWait(continueKey, "U")
-	UtilityWindows_closeTransparentWindow()
+	activeWindow := WinGetTitle("A")
+	msgWin.Destroy()
+	WinActivate(activeWindow) ; reactivate the previously active window (in case the message window stole focus)
+	Sleep(pauseAfterConfirm)
 }
 
 
@@ -116,7 +124,7 @@ ScreenAutomation_waitForUser(message := "Confirm Action", continueKey := "Enter"
 
 ; Retrieve a stored set of screen coordinates from the locations file
 ; If the coordinates do not exist, this function will move the process
-; allowing the useer to click the location and storing it for later
+; allowing the user to click the location and storing it for later
 ScreenAutomation_mouseMoveToLocation(locationName, anchorLocation := ""){
 
 	; attemp to get stored coordinates
@@ -459,7 +467,7 @@ recordStoredLocation(locationName, relativeTo_x := 0, relativeTo_y := 0){
 	global recordingMouseCoords := true ; activates repair hotkey
 	WinWaitClose("Mouse Location Not Found")
 
-	; Wait for hotkey to complete the recording
+	; WAIT FOR HOTKEY TO RECORD THE COORDINATES AND CLOSE THE MESSAGE WINDOW
 
 	global repairCoord_screen_x, repairCoord_screen_y ; get the recorded coordinates from the hotkey
 
@@ -517,6 +525,8 @@ closeRepairWindow(*){
 RSHIFT::{
 	KeyWait("RShift", "U")
 	
+	; debug boolean
+	debugMsg := false
 
 	global repairLocationName ; variable to hold "parameter" value
 	global repairCoord_screen_x, repairCoord_screen_y ; variables to hold "return" values
@@ -524,9 +534,16 @@ RSHIFT::{
 	; get and save the current mouse position
 	currentMouseX := 0
 	currentMouseY := 0
+	
+	; get coordinates from the screen
 	MouseGetPos(&currentMouseX, &currentMouseY)
 	repairCoord_screen_x := currentMouseX
 	repairCoord_screen_y := currentMouseY
+
+	; show a message box with the recorded coordinates (for debugging)
+	if (debugMsg){
+		MsgBox("Recorded Coordinates:`r`nX: " currentMouseX "`r`nY: " currentMouseY)
+	}
 
 	; display message to user
 	closeRepairWindow()
