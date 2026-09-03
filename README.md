@@ -49,7 +49,7 @@ Create, manage, and easily move between Windows 11 virtual desktops. Includes so
 
 
 
-## WindowManagement (Not Converted to V2)
+## WindowManagement
 Easily move and maximize windows to specific monitors.
 
 ### Available Public Functions
@@ -80,7 +80,7 @@ This library includes some additional generic windows that can be displayed to t
 
 
 ## ScreenAutomation (BETA)
-*This library is a work in progress and it likey to change make sure you pay attention to the function parameters as these may also change between versions.* The purpose of this library is to assist with writing fairly complex script that for things like form automation where regular mouse movement and keyboard input are involved. --- The basic principal is you can use defined "locations" on your screen when writing the script and when you script runs it will prompt the user to store and remember these locations so on subsequent runs the script will know where on your screen which locations. I'll include more details an examples in later versions
+*This library is a work in progress and it likey to change, so make sure you pay attention to the function parameters as these may also change between versions.* The purpose of this library is to assist with writing fairly complex scripts for things like screen/form automation where regular mouse movement and keyboard input are involved. --- The basic principal is you can use defined "locations" on your screen when writing the script and when you script runs it will prompt the user to store and remember these locations so on subsequent runs the script will know where on your screen which locations. I'll include more details an examples in later versions
 
 ### Available Public Functions
 More detials on each of these will be included later.
