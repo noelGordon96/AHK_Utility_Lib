@@ -78,6 +78,15 @@ This library includes some additional generic windows that can be displayed to t
 
 
 
+### MiscUtilities
+This library is for misc low level utility functions that might be usefull in a variety of contexts. Over time if patterns emerge, some of these might be moved into more specialized libraries.
+
+### Available Public Functions
+
+***MiscUtilities_betterRun(programPath, params*)***: This is a simple wrapper for the ***Run()*** function. It simply formats all arguments (intended for string params) with quotes around them to avoid manual quote formating everytime you use ***Run()*** with additional string arguments.
+**Major Limitation:** very simple, does not yet detect non-string arguments, or strings with quotes already in them.
+
+
 
 ## ScreenAutomation (BETA)
 *This library is a work in progress and it likey to change, so make sure you pay attention to the function parameters as these may also change between versions.* The purpose of this library is to assist with writing fairly complex scripts for things like screen/form automation where regular mouse movement and keyboard input are involved. --- The basic principal is you can use defined "locations" on your screen when writing the script and when you script runs it will prompt the user to store and remember these locations so on subsequent runs the script will know where on your screen which locations. I'll include more details an examples in later versions
