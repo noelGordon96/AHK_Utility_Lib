@@ -80,10 +80,11 @@ snippetHotkeyInput := ""
 ; other global variables
 ;settingsFile := "settings.ini"
 snippetDir := scriptContext "\snippets"
+settingsFile := scriptContext "\settings.ini"
 
 ; snippet code editor path
 ;snippetEditor := "notepad.exe"	;TODO: make this configurable (settings.ini)
-snippetEditor := "C:\Users\noel.gordon\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+snippetEditor := "notepad.exe"
 
 
 ;###########################################################
