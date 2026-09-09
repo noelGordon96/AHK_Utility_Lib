@@ -47,6 +47,8 @@ Create, manage, and easily move between Windows 11 virtual desktops. Includes so
 
 ***ManageDesktops_getCurrentDesktopNumber()***: Return the number (1 based) of the currently active virtual desktop.
 
+***ManageDesktops_getVirtualDesktopNameArray()***: Return an array of virtual desktop names
+
 
 
 ## WindowManagement

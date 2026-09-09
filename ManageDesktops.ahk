@@ -108,7 +108,7 @@ ManageDesktops_moveWindowsToVirtualDesktop(destinationDesktop, windowTitleArray)
 		; Loop through list of windows and toggle to be visible on all virtual desktops
 		currentMatchMode := A_TitleMatchMode
 		SetTitleMatchMode(1)
-		For index in windowTitleArray {
+		for (index, value in windowTitleArray) {
 			currentValue := windowTitleArray[index]
 			WinActivate(currentValue)
 			WinWaitActive(currentValue,, 5)
@@ -131,7 +131,7 @@ ManageDesktops_moveWindowsToVirtualDesktop(destinationDesktop, windowTitleArray)
 		
 		
 		; Loop back through list of windows and toggle back to only visible on one virtual desktop
-		For index in windowTitleArray {
+		for (index, value in windowTitleArray) {
 			currentValue := windowTitleArray[index]
 			WinActivate(currentValue)
 			WinWaitActive(currentValue,, 5)
@@ -275,6 +275,38 @@ ManageDesktops_getVirtualDesktopName(desktopId := "current"){
 }
 
 
+
+; Return a list of currently active virtual desktops (as an array)
+ManageDesktops_getVirtualDesktopNameArray(){
+	
+	; gather basic needed info
+	currentDeskId := getCurrentDesktopId()
+	deskIdList := getVirtualDesktopIdList()
+	deskCount := getVirtualDesktopCount(currentDeskId, deskIdList)
+
+	; split id list out and put names into an array
+	idLength := StrLen(currentDeskId)
+	remainingDeskIds := deskIdList
+	deskNameArray := Array()
+
+	while (remainingDeskIds != ""){
+
+		; read next id and add name to array
+		nextId := SubStr(remainingDeskIds, 1, idLength)
+		nextName := ManageDesktops_getVirtualDesktopName(nextId)
+		deskNameArray.Push(nextName)
+
+		; remove read id from the list for next iteration
+		idListLen := StrLen(remainingDeskIds)
+		remainingDeskIds := SubStr(remainingDeskIds, idLength+1)
+	}
+
+	; return result
+	return(deskNameArray)
+}
+
+
+
 ; Return the number of virtual desktops currently open
 ManageDesktops_getVirtualDesktopCount(){
 
@@ -329,6 +361,9 @@ getCurrentDesktopId(){
 }
 
 
+
+; Return a list of active virtual desktop ids from the registry
+; (list is a long unsplit string of sequential ids)
 getVirtualDesktopIdList(){
 	; Windows registry location for the currently active virtual desktop id
 	regKeyName_virtualDesktopIdList := "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VirtualDesktops"
