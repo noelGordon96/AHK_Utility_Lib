@@ -5,7 +5,7 @@
 
 ; SCRIPT NAME:	WindowManagement (Funtion Library)
 ; DESCRIPTION:	Contains functions to more effectivally manage and move windows.
-; VERSION:		2.9.3.26
+; VERSION:		2.9.9.26
 ; AUTHOR:		Noel Gordon (veggieman1996@gmail.com)
 
 
@@ -115,7 +115,7 @@ WindowManagement_MoveToMon(monitorNum := 1)
 
 
 ; Maximize the active window on a partucular monitor
-WindowManagement_MaxOnMon(monitorNum := 1)
+WindowManagement_MaxOnMon(monitorNum := 1, side := "full")
 {
 
 	; Only maximize the window if not already maximized on that window
@@ -125,7 +125,22 @@ WindowManagement_MaxOnMon(monitorNum := 1)
 	if (winState != 1 || winMon != monitorNum){
 		WindowManagement_MoveToMon(monitorNum)
 		Sleep(100)
+	}
+
+	; Maximize the window to the specifide side (left, right, or full)
+	if (side == "left"){
+		Send("{LWin down}{Left}{LWin up}")
+	}
+	else if (side == "right"){
+		Send("{LWin down}{Right}{LWin up}")
+	}
+
+	; treat "full" as the default case
+	; ... only if not already maximized...
+	; ... (probably a cleaner approach to organize this given this is already checked for above)
+	else if (winState != 1){
 		Send("{LWin down}{Up}{LWin up}")
 	}
 
 }
+

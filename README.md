@@ -58,7 +58,7 @@ Easily move and maximize windows to specific monitors.
 
 ***WindowManagement_MoveToMon(monitorNum)***: Move the active window to the specified monitor. Also resizes the window to fit on the monitor with some buffer area.
 
-***WindowManagement_MaxOnMon(monitorNum)***: Maximize the active window on the specified monitor if not already.
+***WindowManagement_MaxOnMon(monitorNum, side := "full")***: Maximize the active window on the specified monitor if not already. Can also optionaly specify a side to set the window to take up half the monitor.
 
 
 
