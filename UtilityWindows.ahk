@@ -32,26 +32,31 @@
 
 
 ; similar to a plain MsgBox except that it does not pause the script
-UtilityWindows_tranparentMessageWindow(winMessage, x := "Center", y := "Center", messageColor := "fc0303") {
-    
+UtilityWindows_tranparentMessageWindow(winMessage, x := "Center", y := "Center", messageColor := "fc0303", messageSize := "24", messageFont := "New Courior", opacity := 0) {
+
     ; create gui and add contents and controls
-    global msgWin := Gui(, "Transparent Window")
+    msgWin := Gui(, "Transparent Window")
 	msgWin.Opt("+AlwaysOnTop +LastFound +ToolWindow -Caption")
     msgWin.MarginX := 10
     msgWin.MarginY := 10
 	msgWin.BackColor := "ffffff"
-    msgWin.SetFont("s24 bold c" . messageColor, "New Courior")
+    msgWin.SetFont("s" . messageSize . " bold c" . messageColor, messageFont)
     msgWin.Add("Text",, winMessage)
-    WinSetTransparent(100, msgWin.hwnd)
+    WinSetTransColor("ffffff 180", msgWin.hwnd)
+    ;WinSetTransparent(opacity, msgWin.hwnd)
     
 	msgWin.OnEvent("Close", UtilityWindows_closeTransparentWindow)
     msgWin.Show("x" . x . " y" . y)
+    
+    return msgWin
 
 }
 
 ; gui internal methods
 UtilityWindows_closeTransparentWindow(*){
-    msgWin.Destroy()
+    if IsSet(msgWin){
+        msgWin.Destroy()
+    }
 }
 
 
@@ -97,6 +102,7 @@ UtilityWindows_parallelMessageBox(winTitle, winMessage, btnText := "OK"){
 ; display a simple message to user along with a "Don't show again" check box
 UtilityWindows_dontShowAgainMessage(winTitle, winMessage, hideWinKey, btnText := "OK"){
     global settingsFile
+    verifySettingFile()
 
     ; pull relevant settings variable from ini file
     hideWindow := IniRead(settingsFile, "Utility_Windows", hideWinKey, "false")
@@ -134,4 +140,22 @@ UtilityWindows_dontShowAgainMessage(winTitle, winMessage, hideWinKey, btnText :=
 
     }
 
+}
+
+
+
+;###########################################################
+;	PRIVATE UTILITY FUNCTIONS
+;###########################################################
+
+
+; Varify "shortcutDir" variable is defined for error checking
+; Also create the required directory if it does not exist
+verifySettingFile(){
+	global settingsFile
+
+	varSet := IsSet(settingsFile)
+	if (!varSet){
+		settingsFile := A_ScriptDir "\settings.ini"
+	}
 }

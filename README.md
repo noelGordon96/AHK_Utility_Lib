@@ -69,7 +69,7 @@ This library includes some additional generic windows that can be displayed to t
 
 ### Available Public Functions
 
-***UtilityWindows_tranparentMessageWindow(winMessage, x := "Center", y := "Center", messageColor := "fc0303")***: This function displays a transparent window that displays a message on screen. THIS FUNCTION IS NOT FINSIHED YET.
+***UtilityWindows_tranparentMessageWindow(winMessage, x := "Center", y := "Center", messageColor := "fc0303", messageSize := "24", messageFont := "New Courior", opacity := 0)***: This function displays a transparent window that displays a message on screen.
 
 ***UtilityWindows_closeTransparentWindow()***: Close the previous transparent window mentioned above. Since otherwise the window have some way of closing without exiting the script.
 
