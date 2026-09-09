@@ -109,3 +109,11 @@ More detials on each of these will be included later.
 ***ScreenAutomation_deleteCoordinates(locationName := "")***
 
 ***ScreenAutomation_sendText(textToSend, pauseAfterSend := 0)***
+
+
+
+## SnippetManager (BETA)
+Catalogs reusable automation "snippets" (small, self-contained tasks) and shows a GUI to run them, bind any snippet to any key on the fly, edit them, or create new ones from a template. Built so teammates with less experience with AutoHotkey can use the reuable code snippets as well. This library probably have some clean up that needs to be done, as well as some capabilities I want to add.
+
+### Available Public Functions
+***Note:*** Unlike other library files, this runs as a stand-alone script from the library folder. However to retain similarity to other libraries in your main script, this can be called using the Run() command. You can pass in a single "customContext" parameter which is the path you want the snippet manager to run from (A_ScriptDir from the calling script works well). This allows the "snippets" folder to be housed with your main script instead of in the library files.
