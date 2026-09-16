@@ -80,7 +80,16 @@ This library includes some additional generic windows that can be displayed to t
 
 
 
-### MiscUtilities
+## ExcelCom
+This library contains funtions to interact a localy running Excel, allowing you to easily read data into your script. *This library is still a work in progress.*
+
+### Available Public Functions
+
+***ExcelCom_copyCellContents(pauseTime := 100)***: This function simply pull the context of the corrently focused cell in Excel without any formating.
+
+
+
+## MiscUtilities
 This library is for misc low level utility functions that might be usefull in a variety of contexts. Over time if patterns emerge, some of these might be moved into more specialized libraries.
 
 ### Available Public Functions
