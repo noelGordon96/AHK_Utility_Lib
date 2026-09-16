@@ -17,9 +17,8 @@
 
 #Requires AutoHotkey v2.0
 
-; bundle any utility libraries you need (paths resolve from your main script)
-; #Include "%A_ScriptDir%\lib\ScreenAutomation.ahk"
-; #Include "%A_ScriptDir%\lib\ExcelCom.ahk"
+; bundle any utility libraries you need
+;#Include "%A_ScriptDir%\lib\ScreenAutomation.ahk" ; example - change include path
 
 
 ;###########################################################
@@ -36,7 +35,8 @@ SnippetManager_register({
 	targets: [],						; windows / apps it touches
 	requires: [],						; libraries it depends on
 	file: A_LineFile,					; lets the GUI "Edit" button open this file
-	run: mySnippetPrefix_run			; entry point (function reference)
+	run: mySnippetPrefix_run,			; entry point (function reference)
+	on_bind: mySnippetPrefix_on_bind	; one-time binding logic for the snippet
 })
 
 
@@ -49,16 +49,19 @@ SnippetManager_register({
 ; Main entry point for the snippet (called by the library)
 mySnippetPrefix_run(){
 	
-	
-
-	; TODO: Rename all function in this file to ensure unque names (e.g. mySnippet_*)...
-	; This ensure file script (with all snippets Included) can be loaded into the main script...
-	; without function name collisions.
-	
-
 	; ---- >>> AUTOMATION LOGIC GOES HERE <<< ----
+
 	MsgBox("TEMP: PLACEHOLDER ACTION.`n`r`n`rReplace me with the real automation.", "<Snippet Name>", 0x40)
 
+}
 
+
+; One time code that the Snippet Manager calls when binding the snippet
+mySnippetPrefix_on_bind(){
+	
+	; ---- >>> BINDING LOGIC GOES HERE <<< ----
+
+	MsgBox("Replace the ...on_bind() function with logic you would like run here...", "<Snippet Name>", 0x40)
+	;ScreenAutomation_deleteCoords() ; example code
 
 }

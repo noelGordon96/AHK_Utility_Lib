@@ -9,7 +9,7 @@
 ;				them. #Include this file from your main script and call
 ;				SnippetManager_open() to show the catalog. No programmable
 ;				keyboard required, only AutoHotkey v2.
-; VERSION:		1.9.9.26
+; VERSION:		1.9.16.26
 ; AUTHOR:		Noel Gordon (veggieman1996@gmail.com)
 ; SCOURCE:		none
 
@@ -83,8 +83,7 @@ snippetDir := scriptContext "\snippets"
 settingsFile := scriptContext "\settings.ini"
 
 ; snippet code editor path
-;snippetEditor := "notepad.exe"	;TODO: make this configurable (settings.ini)
-snippetEditor := "notepad.exe"
+snippetEditor := "C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;TODO: make this configurable (settings.ini)
 
 
 ;###########################################################
@@ -154,7 +153,7 @@ SnippetManager_open(*){
 
 	; create the main window
 	snippetGui := Gui(, "Snippet Manager")
-	;snippetGui.Opt("+Resize")
+	snippetGui.Opt("+Resize")
 	snippetGui.SetFont("s10", "Segoe UI")
 
 	; snippet list (name / description / target apps)
@@ -259,6 +258,8 @@ bindSelectedSnippet_handle(*){
 		Hotkey(chosenKey, runBoundSnippet.Bind(snippet), "On")
 		MsgBox("Bound `"" snippet.name "`" to " chosenKey, "Snippet Manager", 0x40)
 		WinMinimize(snippetGui.Hwnd)
+		Sleep(200)
+		snippet.on_bind.Call()
 	}
 	catch as err {
 		MsgBox("Could not bind " chosenKey ":`r`n" err.Message, "Snippet Manager", 0x10)
