@@ -255,11 +255,11 @@ bindSelectedSnippet_handle(*){
 
 	; Bind carries the selected snippet into the hotkey callback
 	try {
-		Hotkey(chosenKey, runBoundSnippet.Bind(snippet), "On")
-		MsgBox("Bound `"" snippet.name "`" to " chosenKey, "Snippet Manager", 0x40)
 		WinMinimize(snippetGui.Hwnd)
 		Sleep(200)
 		snippet.on_bind.Call()
+		Hotkey(chosenKey, runBoundSnippet.Bind(snippet), "On")
+		MsgBox("Bound `"" snippet.name "`" to " chosenKey, "Snippet Manager", 0x40)
 	}
 	catch as err {
 		MsgBox("Could not bind " chosenKey ":`r`n" err.Message, "Snippet Manager", 0x10)
