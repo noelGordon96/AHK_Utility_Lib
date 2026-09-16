@@ -106,7 +106,13 @@ ScreenAutomation_copyBrowserAddressBar(windowTitle := "A"){
 ; Key is defines in the settings for this library
 ScreenAutomation_waitForUser(message := "Confirm Action", continueKey := "Enter", messageColor := "fc0303", pauseAfterConfirm := 0){
 	activeWindow := WinGetTitle("A")
-	msgWin := UtilityWindows_tranparentMessageWindow(message, "1500", "-150", messageColor)
+	
+	
+	; ISSUE: This line is hardcoded to my monitor setup!!!!!!!!!!!!!!!!!!
+	;msgWin := UtilityWindows_tranparentMessageWindow(message, "1500", "-150", messageColor)
+	msgWin := UtilityWindows_tranparentMessageWindow(message,,, messageColor)
+	
+	
 	WinActivate(activeWindow) ; reactivate the previously active window (in case the message window stole focus)
 	KeyWait(continueKey, "D")
 	KeyWait(continueKey, "U")
