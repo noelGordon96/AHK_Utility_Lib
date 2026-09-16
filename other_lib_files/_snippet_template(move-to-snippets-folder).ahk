@@ -18,7 +18,7 @@
 #Requires AutoHotkey v2.0
 
 ; bundle any utility libraries you need
-;#Include "%A_ScriptDir%\lib\ScreenAutomation.ahk" ; example - change include path
+;#Include "%A_ScriptDir%\ScreenAutomation.ahk" ; example - change include path
 
 
 ;###########################################################
