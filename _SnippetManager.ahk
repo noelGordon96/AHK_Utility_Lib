@@ -506,15 +506,19 @@ createSnippetFromDetails(name, desc, fileName){
 		return
 	}
 
-	; start from the template if we have one, otherwise a minimal stub
+	; start from the user's own template if they have one in the snippets
+	; folder; otherwise fall back to the standard library template shipped in
+	; other_lib_files (users can copy that one into snippets\ and edit it)
 	templateFile := snippetDir "\_snippet_template.ahk"
-	if (FileExist(templateFile)){
-		FileCopy(templateFile, newFile)
-		replaceFileTemplatePlaceholders(name, desc, fileName, newFile)
+	if (!FileExist(templateFile)){
+		templateFile := A_ScriptDir "\other_lib_files\_snippet_template.ahk"
 	}
-	else {
-		FileAppend(buildSnippetStub(name, desc, fileName), newFile)
+	if (!FileExist(templateFile)){
+		MsgBox("Could not find a snippet template:`r`n" templateFile, "Snippet Manager", 0x10)
+		return
 	}
+	FileCopy(templateFile, newFile)
+	replaceFileTemplatePlaceholders(name, desc, fileName, newFile)
 
 	; open the new file so it can be filled in right away
 	editSnippetFile(newFile)
@@ -714,33 +718,6 @@ buildDynamicContextCaller(){
 	;contextCallerFile_quotes := Format('"{1}"', contextCallerFile)
 	FileAppend(codeLines, contextCallerFile)
 }
-
-
-
-; Minimal snippet contents used when no template file is available
-; displayName = register name:, description = register desc:, filePrefix = function prefix
-buildSnippetStub(displayName, description, filePrefix){
-	descText := (Trim(description) == "") ? "Describe what this snippet does" : description
-	descText := escapeForAhkString(descText)
-	stub := "#Requires AutoHotkey v2`r`n`r`n`r`n"
-	stub := stub "SnippetManager_register({`r`n"
-	stub := stub "`tname: `"" displayName "`",`r`n"
-	stub := stub "`tdesc: `"" descText "`",`r`n"
-	stub := stub "`ttargets: [],`r`n"
-	stub := stub "`trequires: [],`r`n"
-	stub := stub "`tfile: A_LineFile,`r`n"
-	stub := stub "`trun: " filePrefix "_run,`r`n"
-	stub := stub "`ton_bind: " filePrefix "_on_bind`r`n"
-	stub := stub "})`r`n`r`n`r`n"
-	stub := stub filePrefix "_run(){`r`n"
-	stub := stub "`tMsgBox(`"Replace me with the real automation.`", `"" displayName "`", 0x40)`r`n"
-	stub := stub "}`r`n`r`n`r`n"
-	stub := stub filePrefix "_on_bind(){`r`n"
-	stub := stub "`t; one-time logic run when this snippet is bound to a key`r`n"
-	stub := stub "}`r`n"
-	return stub
-}
-
 
 
 
