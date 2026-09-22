@@ -126,6 +126,10 @@ buildSnippetIndex()
 ; (see comment on "contextCaller")
 #Include "%A_ScriptDir%\other_lib_files\_snippet_contextCaller.ahk"
 
+; re-bind any hotkeys saved from before a Rescan & Reload (catalog is now
+; loaded); done before the GUI is built so the lists paint the right state
+restoreBoundHotkeys()
+
 ; open main window
 SnippetManager_openGui()
 
@@ -150,6 +154,7 @@ SnippetManager_register(snippetInfo_obj){
 ; new or renamed snippet files are picked up (#Include only runs at load time)
 SnippetManager_rescan(){
 	savePreviousContext()
+	saveBoundHotkeys()
 	buildSnippetIndex()
 	Reload()
 }
@@ -200,7 +205,7 @@ SnippetManager_openGui(*){
 	newButton.OnEvent("Click", createNewSnippet_handle)
 	browseButton := snippetGui.Add("Button", "x+10 w140", "Browse Snippets")
 	browseButton.OnEvent("Click", browseSnippets_handle)
-	reloadButton := snippetGui.Add("Button", "x+10 w160", "Rescan && Reload")
+	reloadButton := snippetGui.Add("Button", "x+10 w160", "Rescan && Reload (F5)")
 	reloadButton.OnEvent("Click", reloadSnippetCatalog_handle)
 
 	; currently bound snippets (which key runs which snippet right now)
@@ -580,6 +585,13 @@ Enter::
 
 
 
+; F5 triggers a Rescan & Reload (same as the button). Because it is scoped to
+; this window, another script can force a reload by activating the Snippet
+; Manager window and sending {F5} (bound hotkeys are preserved across the reload)
+F5::reloadSnippetCatalog_handle()
+
+
+
 #HotIf
 
 
@@ -606,6 +618,81 @@ recordBoundSnippet(key, snippet){
 		}
 	}
 	boundSnippets_obj.Push({key: key, snippet: snippet})
+}
+
+
+; Write the current bindings to a throwaway temp file so a Rescan & Reload can
+; restore them. This is transient reload-state, not config: it lives next to the
+; library (like the context bridge) and is consumed on read (see restore below).
+; One line per binding, tab-delimited: <hotkey>`t<snippet name>
+saveBoundHotkeys(){
+	global boundSnippets_obj
+	hotkeyFile := A_ScriptDir "\other_lib_files\_tempBoundHotkeys.txt"
+
+	; nothing bound - make sure no stale file is left to restore from
+	if (FileExist(hotkeyFile)){
+		FileDelete(hotkeyFile)
+	}
+	if (boundSnippets_obj.Length == 0){
+		return
+	}
+
+	fileText := ""
+	for index, entry in boundSnippets_obj{
+		fileText := fileText entry.key "`t" entry.snippet.name "`r`n"
+	}
+	FileAppend(fileText, hotkeyFile)
+}
+
+
+; Re-bind the hotkeys saved by saveBoundHotkeys(). Called at startup after the
+; snippet catalog is loaded. The temp file is deleted as it's read (one-shot),
+; so bindings only survive the reload that saved them - a fresh launch starts
+; clean. Unlike a fresh Bind, this does NOT run on_bind(): it only re-registers
+; the key so an edited snippet's code is picked up
+restoreBoundHotkeys(){
+	hotkeyFile := A_ScriptDir "\other_lib_files\_tempBoundHotkeys.txt"
+	if (!FileExist(hotkeyFile)){
+		return
+	}
+	fileText := FileRead(hotkeyFile)
+	FileDelete(hotkeyFile)
+
+	Loop Parse, fileText, "`n", "`r"{
+		line := A_LoopField
+		tabPos := InStr(line, "`t")
+		if (!tabPos){
+			continue
+		}
+		savedKey := SubStr(line, 1, tabPos - 1)
+		savedName := SubStr(line, tabPos + 1)
+
+		snippet := findSnippetByName(savedName)
+		if (snippet == ""){
+			continue	; snippet was renamed or deleted since it was bound
+		}
+
+		; re-register the key; skip (don't abort) any key that won't bind
+		try {
+			Hotkey(savedKey, runBoundSnippet.Bind(snippet), "On")
+			recordBoundSnippet(savedKey, snippet)
+		}
+		catch as err {
+			; e.g. an invalid/unsupported key string - ignore and continue
+		}
+	}
+}
+
+
+; Find a registered snippet by its display name (or "" if none matches)
+findSnippetByName(name){
+	global snippetCatalog_obj
+	for index, snippet in snippetCatalog_obj{
+		if (snippet.name == name){
+			return snippet
+		}
+	}
+	return ""
 }
 
 
