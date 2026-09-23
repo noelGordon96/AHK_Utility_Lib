@@ -81,11 +81,15 @@ This library includes some additional generic windows that can be displayed to t
 
 
 ## ExcelCom
-This library contains funtions to interact a localy running Excel, allowing you to easily read data into your script. *This library is still a work in progress.*
+This library contains funtions to interact with a localy running Excel, allowing you to easily read data into your script. Data is pulled directly from Excel's COM object (silently, without clipboard use or simulated keystrokes). *Only works with a local instance of Excel - online Microsoft 365 sessions will not function properly.*
 
 ### Available Public Functions
 
-***ExcelCom_copyCellContents(pauseTime := 100)***: This function simply pull the context of the corrently focused cell in Excel without any formating.
+***ExcelCom_getSelectedRowData(cellLength := 0)***: Return an Array of all cell values in the currently selected row (index 1 = column A), read silently from the Excel COM object. If ***cellLength*** is omitted (or <= 0), the row's last used column is detected automatically and every column up to it is returned. Returns an empty Array if no running Excel instance is found.
+
+***ExcelCom_copyCellContents()***: Return the value of the currently selected (active) cell, read directly from the COM object. Because it uses the cell's value, a formula cell returns its computed result (not the formula) and numbers/text come back without display formatting ($, %, commas, etc.).
+
+***ExcelCom_copyCellContents_raw(pauseTime := 100)***: The original keystroke-based alternative - copies the selected cell's plain text to the clipboard via F2 / Ctrl+A / Ctrl+C. Useful as a fallback when reading via the COM object is not desired.
 
 
 
