@@ -5,7 +5,7 @@
 
 ; SCRIPT NAME:	Utility Windows (Function Library)
 ; DESCRIPTION:	Provides custom utility windows for various purposes.
-; VERSION:		2.2.3.25
+; VERSION:		2.9.23.26
 ; AUTHOR:		Noel Gordon (veggieman1996@gmail.com)
 ; SCOURCE:		none
 
@@ -84,6 +84,10 @@ UtilityWindows_parallelMessageBox(winTitle, winMessage, btnText := "OK"){
 
 	msgWin.OnEvent("Close", closeMessageWindow)
     msgWin.Show("xCenter y150 w420")
+
+    ; return the window object so the caller can close it programmatically later
+    ; (e.g. to auto-dismiss this window when a follow-up message is shown)
+    return msgWin
 
 
     ; gui internal methods
