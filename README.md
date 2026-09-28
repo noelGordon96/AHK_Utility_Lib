@@ -85,11 +85,31 @@ This library contains funtions to interact with a localy running Excel, allowing
 
 ### Available Public Functions
 
-***ExcelCom_getSelectedRowData(cellLength := 0)***: Return an Array of all cell values in the currently selected row (index 1 = column A), read silently from the Excel COM object. If ***cellLength*** is omitted (or <= 0), the row's last used column is detected automatically and every column up to it is returned. Returns an empty Array if no running Excel instance is found.
+***ExcelCom_getCell(row, column)***: Return the value of a single cell by absolute position on the active sheet, addressed by 1-based ***row*** and ***column*** (1 = first row / column A), read silently from the COM object. This is the low-level primitive the other single-cell read helpers build on. Because it uses the cell's value, a formula cell returns its computed result (not the formula) and numbers/text come back without display formatting ($, %, commas, etc.). Returns an empty string if no running Excel instance is found, the coordinates are invalid, or an error occurs.
 
-***ExcelCom_copyCellContents()***: Return the value of the currently selected (active) cell, read directly from the COM object. Because it uses the cell's value, a formula cell returns its computed result (not the formula) and numbers/text come back without display formatting ($, %, commas, etc.).
+***ExcelCom_setCell(row, column, value)***: Write ***value*** into a single cell by absolute position on the active sheet, addressed by 1-based ***row*** and ***column*** (1 = first row / column A). The write goes directly to the COM object, so it is silent and does not use the clipboard or simulated keystrokes. This is the low-level primitive the other single-cell write helpers build on. Returns true on success, or false if no running Excel instance is found, the coordinates are invalid, or an error occurs.
 
-***ExcelCom_copyCellContents_raw(pauseTime := 100)***: The original keystroke-based alternative - copies the selected cell's plain text to the clipboard via F2 / Ctrl+A / Ctrl+C. Useful as a fallback when reading via the COM object is not desired.
+***ExcelCom_getSelectedRow(maxColumns := 0)***: Return an Array of all cell values in the currently selected row (index 1 = column A), read silently from the Excel COM object. If ***maxColumns*** is omitted (or <= 0), the row's last used column is detected automatically and every column up to it is returned. Returns an empty Array if no running Excel instance is found.
+
+***ExcelCom_getSelectedRowCell(column)***: Return the value of a single cell on the currently selected row, addressed by 1-based ***column*** (1 = column A, 2 = column B, ...). Resolves the current selection's row and delegates the read to ***ExcelCom_getCell***. Returns an empty string if no running Excel instance is found, the column number is invalid, or an error occurs.
+
+***ExcelCom_setSelectedRowCell(column, value)***: Write ***value*** into a single cell on the currently selected row, addressed by 1-based ***column*** (1 = column A, 2 = column B, ...). Resolves the current selection's row and delegates the write to ***ExcelCom_setCell***. Returns true on success, or false if no running Excel instance is found, the column number is invalid, or an error occurs.
+
+***ExcelCom_findColumnByHeader(header, headerRow := 1)***: Return the 1-based column number of the first cell in ***headerRow*** (default row 1) of the active sheet whose text exactly matches ***header*** (case-sensitive, not trimmed). The header row is read in a single COM call. Returns 0 (and shows a message) if no running Excel instance is found, the header is not found, or an error occurs.
+
+***ExcelCom_getSelectedRowByHeader(header, headerRow := 1)***: Return the value of a cell on the currently selected row, addressed by the column whose header matches ***header*** (case-sensitive). Combines ***ExcelCom_findColumnByHeader*** with ***ExcelCom_getSelectedRowCell*** so you can work by header name instead of a raw column number. Returns an empty string if the header is not found or an error occurs.
+
+***ExcelCom_setSelectedRowByHeader(header, value, headerRow := 1)***: Write ***value*** into a cell on the currently selected row, addressed by the column whose header matches ***header*** (case-sensitive). Combines ***ExcelCom_findColumnByHeader*** with ***ExcelCom_setSelectedRowCell*** so you can work by header name instead of a raw column number. Returns true on success, or false if the header is not found or an error occurs.
+
+***ExcelCom_getActiveCell()***: Return the value of the currently active cell, read directly from the COM object. Because it uses the cell's value, a formula cell returns its computed result (not the formula) and numbers/text come back without display formatting ($, %, commas, etc.).
+
+***ExcelCom_copyActiveCell(pauseTime := 100)***: The keystroke-based alternative - copies the active cell's plain text to the clipboard via F2 / Ctrl+A / Ctrl+C. Useful as a fallback when reading via the COM object is not desired.
+
+***ExcelCom_selectCell(row, column)***: Move the selection to a specific cell on the active sheet, addressed by 1-based ***row*** and ***column*** (1 = column A). Returns true on success, or false if no running Excel instance is found or the cell cannot be selected.
+
+***ExcelCom_getActiveCellLocation()***: Return the location of the currently active cell as an object with ***row*** and ***column*** properties (both 1-based). Returns false if no running Excel instance is found or no cell is active.
+
+***ExcelCom_getExcelWinName()***: Return the title of the running Excel window. When several Excel windows are open, returns an Array of titles ordered by Z-order (most recently active first). Returns false if no Excel window is found.
 
 
 
